@@ -31,7 +31,8 @@ class Tensor:
             parents=[self, other],
             op='-')
     def __rsub__(self, other):
-        return self - other
+        other = self._ensure_tensor(other)
+        return other - self
 
     def __mul__(self, other):
         other = self._ensure_tensor(other)
@@ -50,16 +51,28 @@ class Tensor:
             op='/'
         )
     def __rtruediv__(self, other):
-        return self / other
+        other = self._ensure_tensor(other)
+        return  other / self
 
+    def __pow__(self,other):
+        other = self._ensure_tensor(other)
+        return Tensor(
+            data = self.data**other.data,
+            parents = [self,other],
+            op = 'pow'
+        )
+
+    def __neg__(self):
+        return Tensor(
+            data = self.data*-1,
+            parents = [self],
+            op = 'neg'
+        )
+    
 
 if __name__ == "__main__":
-    a = Tensor(5)
-
-    print(a + 3)
-    print(3 + a)
-
-    print(a + 2.5)
-    print(2.5 + a)
-
-    print(a + Tensor(10))
+    a = Tensor(10)
+    b = -a
+    
+    print(a)
+    print(b)
