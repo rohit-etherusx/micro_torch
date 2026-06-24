@@ -406,7 +406,7 @@ class TestComplexOperations:
         t1 = Tensor(2)
         t2 = Tensor(3)
         result = (t1 ** 2) + (t2 * 4) - 5
-        assert result.data == 7
+        assert result.data == 11
 
     def test_many_parents(self):
         """Test operation with result tracking."""
