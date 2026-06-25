@@ -4,17 +4,11 @@
 
 Welcome to **micro_torch** – the lightweight, no‑frills tensor library that pretends it could be a deep‑learning framework if it tried a little harder. It’s perfect for:
 
-- People who love playing with numbers but hate installing massive dependencies.
-- Students who need a quick sanity‑check for arithmetic without pulling in PyTorch.
-- Anyone who enjoys a good joke about tensors being *tiny*.
 
 ## What does it do?
 
 It defines a single class, `Tensor`, that stores a scalar value and remembers how it was created. Every arithmetic operation (`+`, `-`, `*`, `/`, `**`, unary `-`) returns a **new** `Tensor` that records:
 
-- The resulting `data` (the actual number).
-- A list of `parents` – the tensors that participated in the operation.
-- The `op` string (e.g. `'+'`, `'-'`, `'*'`, `'/'`, `'pow'`, `'neg'`).
 
 That’s it. No autograd, no GPU support, no fancy broadcasting – just pure Python fun.
 
@@ -60,6 +54,5 @@ Feel free to open issues or PRs. Just remember:
 
 MIT – because we’re generous and you can do whatever you want with it.
 
----
 
 *If you can’t build this, you probably need a bigger torch. Happy coding!*
