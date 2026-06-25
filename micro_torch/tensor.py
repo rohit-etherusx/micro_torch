@@ -1,17 +1,16 @@
 class Tensor:
     def __init__(self, data, parents=None, op=None):
-        # scalar payload (int or float)
-        self.data = data
-        # list of parent Tensors (empty for leaf tensors)
-        self.parents = parents or []
-        # operation name that produced this tensor (None for leaves)
-        self.op = op
-
+        
+        self.data = data                        # scalar payload (int or float)
+        self.parents = parents or []            # list of parent Tensors (empty for leaf tensors)
+        self.op = op                            # operation name that produced this tensor (None for leaves)
+        self._backward = lambda : None          # the back_propagation functions calls
+        self.grad = 0.0                         # the node gradient 
+ 
+  # wrap scalars into a Tensor; return Tensor unchanged
     def _ensure_tensor(self, value):
-        # wrap scalars into a Tensor; return Tensor unchanged
         if isinstance(value, Tensor):
             return value
-
         return Tensor(value)
 
     # concise string representation
@@ -21,10 +20,17 @@ class Tensor:
     # primitive add operation
     def __add__(self, other):
         other = self._ensure_tensor(other)
-        return Tensor(
+        out = Tensor(
             data=self.data + other.data,
             parents=[self, other],
             op='+')
+
+        def _backward() : 
+            self.grad += out.grad * 1.0
+            other.grad += out.grad * 1.0
+        out._backward = _backward
+
+        return out
 
     def __radd__(self, other):
         # support scalar + Tensor
@@ -44,10 +50,17 @@ class Tensor:
     # multiplication
     def __mul__(self, other):
         other = self._ensure_tensor(other)
-        return Tensor(
+        out = Tensor(
             data=self.data * other.data,
             parents=[self, other],
             op='*')
+
+        def _backward():
+            self.grad += out.grad * other.data
+            other.data += out.grad * self.data
+        out._backward = _backward()
+
+        return out
 
     def __rmul__(self, other):
         return self * other
@@ -55,11 +68,16 @@ class Tensor:
     # true division
     def __truediv__(self, other):
         other = self._ensure_tensor(other)
-        return Tensor(
+        out =  Tensor(
             data=self.data / other.data,
             parents=[self, other],
             op='/'
         )
+
+        def _backward():
+            self.grad += (1/other.data)*out.grad
+            other.grad +=  (-self.data/(other.data)**2)*out.grad
+            
 
     def __rtruediv__(self, other):
         other = self._ensure_tensor(other)
