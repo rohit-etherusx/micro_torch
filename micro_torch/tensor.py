@@ -1,5 +1,4 @@
-
-
+import math as m
 
 class Tensor:
     def __init__(self, data, parents=None, op=None):
@@ -110,14 +109,36 @@ class Tensor:
             parents=[self],
             op='neg'
         )
-
         def _backward():
             self.grad += -1 * out.grad
-
         out._backward = _backward
         return out
 
+
+    def exp(self):
+        x = self.data
+        out = Tensor(data=m.exp(x),
+            parents=[self],
+            op='exp'
+        )
+        def _backward():
+            self.grad += out.grad*out.data
+        out._backward = _backward
+        return out
     
+
+    ##    -----    activation functions     --------    ##  
+
+    def tanh(self):
+        # t = (m.exp(x)-m.exp(-x))/(m.exp(x)+m.exp(-x))
+        t = math.tanh(self.data)
+        out = Tensor(data=t,parents=[self],op='tanh')
+
+        def _backward():
+            self.grad+=out.grad*(1-t**2)
+        out._backward = _backward
+
+        return out
 
 
     def backward(self):
