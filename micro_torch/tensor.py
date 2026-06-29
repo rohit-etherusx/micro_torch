@@ -117,9 +117,35 @@ class Tensor:
         out._backward = _backward
         return out
 
-if __name__ == "__main__":
-    a = Tensor(10)
-    b = -a
+    
 
-    print(a)
-    print(b)
+
+    def backward(self):
+        topo = []
+        visited = set()
+
+        def build_topo(node):
+            if node not in visited:
+                visited.add(node)
+
+                for parent in node.parents:
+                    build_topo(parent)
+                topo.append(node)
+
+        build_topo(self)
+        self.grad = 1.0
+        for node in reversed(topo):
+            node._backward()
+
+
+if __name__ == "__main__":
+    a = Tensor(2)
+
+    b = a * 3
+    c = a * 4
+
+    d = b + c
+
+    d.backward()
+
+    print(a.grad)
