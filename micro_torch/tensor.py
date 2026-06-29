@@ -1,3 +1,6 @@
+
+
+
 class Tensor:
     def __init__(self, data, parents=None, op=None):
         
@@ -39,7 +42,9 @@ class Tensor:
     # primitive subtraction (kept as original implementation)
     def __sub__(self, other):
         other = self._ensure_tensor(other)
-        return self + (-other)
+        out = self + (-other)
+        out.op = '-'
+        return out
         # explicit subtraction (commented to preserve original form):
         # return Tensor(data=self.data - other.data, parents=[self, other], op='-')
 
@@ -57,8 +62,8 @@ class Tensor:
 
         def _backward():
             self.grad += out.grad * other.data
-            other.data += out.grad * self.data
-        out._backward = _backward()
+            other.grad += out.grad * self.data
+        out._backward = _backward
 
         return out
 
@@ -73,11 +78,13 @@ class Tensor:
             parents=[self, other],
             op='/'
         )
-
         def _backward():
             self.grad += (1/other.data)*out.grad
             other.grad +=  (-self.data/(other.data)**2)*out.grad
-            
+        
+        out._backward = _backward
+
+        return out
 
     def __rtruediv__(self, other):
         other = self._ensure_tensor(other)
@@ -85,21 +92,30 @@ class Tensor:
 
     # power
     def __pow__(self, other):
-        other = self._ensure_tensor(other)
-        return Tensor(
-            data=self.data ** other.data,
-            parents=[self, other],
+        assert isinstance(other, (int, float)),  "MicroTorch currently supports only scalar exponents"
+        out =  Tensor(
+            data=self.data ** other,
+            parents=[self],
             op='pow'
         )
+        def _backward():
+            self.grad += out.grad*(other*(self.data**(other-1)))
+        out._backward = _backward
+        return out
 
     # negation
     def __neg__(self):
-        return Tensor(
+        out =  Tensor(
             data=self.data * -1,
             parents=[self],
             op='neg'
         )
 
+        def _backward():
+            self.grad += -1 * out.grad
+
+        out._backward = _backward
+        return out
 
 if __name__ == "__main__":
     a = Tensor(10)
