@@ -170,6 +170,20 @@ class Tensor:
         for node in reversed(topo):
             node._backward()
 
+    def zero_grad(self):
+        visited = set()
+    
+        def clear(node):
+            if node not in visited:
+                visited.add(node)
+    
+                node.grad = 0.0
+    
+                for parent in node.parents:
+                    clear(parent)
+    
+        clear(self)
+    
 
 if __name__ == "__main__":
     a = Tensor(2)
