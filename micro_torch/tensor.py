@@ -140,6 +140,18 @@ class Tensor:
 
         return out
 
+    def sigmoid(self):
+        pass 
+    
+    def Relu(self):
+        pass
+    
+    def leaky_Relu(self):
+        pass
+        
+    def softmax(self):
+        pass
+
 
     def backward(self):
         topo = []
