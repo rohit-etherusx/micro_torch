@@ -102,10 +102,41 @@ class Tensor:
     
     
     def __pow__(self, other):
-        pass
+        assert isinstance(other, (int,float))
+        out = Tensor(
+            data=self.data**other,
+            parents=[self],
+            op = '*'
+        )
+        
+        def _backward():
+            self.grad += out.grad*(other*(self.data**(other-1)))
+        out._backward = _backward
+        
+        return out
+    
+   
     
     def __rpow__(self, other):
-        pass
+        raise NotImplementedError(
+            "tensor exponents not supported yet"
+        )
+        # other = self._ensure_tensor(other)
+        # out = Tensor(
+        #     data=other.data**self.data,
+        #     parents=[other,self],
+        #     op = '*'
+        # )
+
+        # def _backward():
+        #     self.grad += out.grad * (other.data*np.log(other.data))
+        #     other.grad += out.grad * (self.data*(other.data**(self.data-1)))
+            
+            
+    
+    
+    
+
 
 if __name__ == "__main__":
 
