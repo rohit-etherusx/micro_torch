@@ -1,12 +1,14 @@
 [project]
 name = "micro-torch"
 version = "0.2.0"
-description = "Add your description here"
+description = "vector-tensor-implementation"
 readme = "README.md"
 requires-python = ">=3.11"
+
 dependencies = [
     "matplotlib>=3.11.0",
     "numpy>=2.4.6",
+    "math"
 ]
 
 [dependency-groups]
