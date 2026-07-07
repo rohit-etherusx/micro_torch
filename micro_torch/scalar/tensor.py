@@ -131,7 +131,7 @@ class Tensor:
 
     def tanh(self):
         # t = (m.exp(x)-m.exp(-x))/(m.exp(x)+m.exp(-x))
-        t = math.tanh(self.data)
+        t = m.tanh(self.data)
         out = Tensor(data=t,parents=[self],op='tanh')
 
         def _backward():

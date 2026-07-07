@@ -1,1 +1,4 @@
-from .tensor import Tensor
+from .scalar import Tensor
+
+__all__ = ["Tensor"]
+
